@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python/Flask tutorial sample for Visual Studio Code
 
 * This sample contains the completed program from the tutorial, make sure to visit the link: [Using Flask in Visual Studio Code](https://code.visualstudio.com/docs/python/tutorial-flask). Intermediate steps are not included.
@@ -20,3 +21,7 @@ When you submit a pull request, a CLA-bot automatically determines whether you n
 * This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 * For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 * Contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+=======
+# SCULabTAevaluations
+Web app made for COEN 174L.
+>>>>>>> d832a816f84fbe2f210b6a83835cb2d9220667a1
