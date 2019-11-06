@@ -23,3 +23,13 @@ class Survey(db.Model):
     def __repr__(self):
         return '<Survey {}>'.format(self.token)
     
+class Class(db.Model):
+    __tablename__="class"
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer)
+    name = db.Column(db.String(10))
+    size = db.Column(db.Integer)
+    #instructor = db.Column(db.String(10))
+
+    def __repr__(self):
+        return '<Class {}>'.format(self.name)
