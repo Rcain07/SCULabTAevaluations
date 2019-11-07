@@ -9,6 +9,7 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
 # You can also create a setting through the App Service Extension in VS Code.
 ENV LISTEN_PORT=5000
 EXPOSE 5000
+EXPOSE 2222 80
 
 # Indicate where uwsgi.ini lives
 ENV UWSGI_INI uwsgi.ini
