@@ -26,8 +26,16 @@ def survey(token = None):
 
 @app.route("/success", methods=['GET', 'POST'])
 def success():
+    # get survey response from database
+    responses = []
+    if Survey.query.all():
+        data = db.session.query(Survey).all()
+        for response in data:
+            responses.append([response.id, response.token, response.answers])
+    else:
+        responses = ['No surveys in the database']
     return  render_template(
-        "success.html",
+        "success.html",responses=responses
         
     )
 
@@ -67,10 +75,12 @@ def upload_file():
 def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes = list_classes(path)
+    for c in classes:
+        db.session.add(Class(number=c[0],name=c[1],size=c[2]))
+    db.session.commit()
     return render_template(
         "classes.html",classes=classes
     )
-  
 
 def list_classes(loc):
     wb = xlrd.open_workbook(loc)
