@@ -34,3 +34,4 @@ class Class(db.Model):
     def __repr__(self):
         return '<Class {}>'.format(self.name)
 
+db.create_all()
