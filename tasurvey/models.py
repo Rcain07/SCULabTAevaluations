@@ -32,4 +32,4 @@ class Class(db.Model):
     #instructor = db.Column(db.String(10))
 
     def __repr__(self):
-        return '<Class {}>'.format(self.name)
+        return '<Class {}>'.format(self.number)
