@@ -8,3 +8,7 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+try:
+  db.create_all()
+except:
+  pass
