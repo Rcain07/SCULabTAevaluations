@@ -1,23 +1,22 @@
-<<<<<<< HEAD
+{% extends "layout.html" %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script type="text/javascript" src="form-builder.js"></script>
-    <link rel="stylesheet" type="text/css" href="form-builder.scss">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="jquery.form-builder.js"></script>
+    <script type="text/javascript" src="/src/js/form-builder.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!--<script src="jquery.form-builder.js"></script>-->
 </head> 
 <body>
         <div class="build-wrap"></div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script>
-        jQuery($ => {
+        /*jQuery($ => {
           $('.build-wrap').formBuilder()
-        })
+        })*/
         </script>
             <form id="rendered-form">
                 <div class="rendered-form">
@@ -430,15 +429,10 @@
                     </div>
                 </div>
             </form>
+
+            <form action="/end">
+                <input type="submit" value="Submit">
+            </form> 
 </body>
 
 </html>
-=======
-{% extends "layout.html" %}
-{% block title %}
-Home
-{% endblock %}
-{% block content %}
-<p>Home page for the Visual Studio Code Flask tutorial.</p>
-{% endblock %}
->>>>>>> 66375ebdb38ada3c54c84288f6ba2a37fe0f859e
