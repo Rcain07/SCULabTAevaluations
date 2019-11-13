@@ -1,27 +1,29 @@
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, request, send_from_directory
+from flask import Flask, render_template, redirect, url_for, request, send_from_directory, flash
 from . import app
-from tasurvey.forms import SurveyForm
+# from tasurvey.forms import SurveyForm
 from tasurvey.models import *
 from werkzeug.utils import secure_filename
 import os
 import xlrd
-
+import json
 # User(email="rcain@scu.edu")
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token = None):
-    surveyFormObject = SurveyForm()
-    if surveyFormObject.validate_on_submit():
-        surv = Survey(token="test",answers=surveyFormObject.data['Answers'])
-        db.session.add(surv)
+    # surveyFormObject = SurveyForm()
+    if request.method == 'POST':
+        x = json.dumps(request.form)
+
+        x = Survey(token="test",answers=x)
+        db.session.add(x)
         db.session.commit()
         return redirect(url_for('success'))
     return render_template(
-        "survey.html",
-        form=surveyFormObject,
+        "home.html",
+        # form=surveyFormObject,
     )
 
 @app.route("/success", methods=['GET', 'POST'])
