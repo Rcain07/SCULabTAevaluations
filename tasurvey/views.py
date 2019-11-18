@@ -6,25 +6,28 @@ from tasurvey.models import *
 from werkzeug.utils import secure_filename
 import os
 import xlrd
+import secrets as sec
 import json
-# User(email="rcain@scu.edu")
 
-@app.route("/", methods=['GET', 'POST'])
-@app.route("/survey/", methods=['GET', 'POST'])
+# @app.route("/", methods=['GET', 'POST'])
+# @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
-def survey(token = None):
+def survey(token):
     # surveyFormObject = SurveyForm()
+    s = Survey.query.filter_by(token=token).one_or_none()
+    if (not s or s.is_done):
+        return redirect(url_for('404'))
     if request.method == 'POST':
-        x = json.dumps(request.form)
-
-        x = Survey(token="test",answers=x)
-        db.session.add(x)
+        s.answers = json.dumps(request.form)
+        s.is_done = True
+        db.session.add(s)
         db.session.commit()
         return redirect(url_for('success'))
-    return render_template(
-        "home.html",
-        # form=surveyFormObject,
-    )
+    else:
+        return render_template(
+            "home.html",
+            # form=surveyFormObject,
+        )
 
 @app.route("/success", methods=['GET', 'POST'])
 def success():
@@ -76,10 +79,21 @@ def upload_file():
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
-    classes = list_classes(path)
+    classes,surveys = list_classes(path)
     for c in classes:
         db.session.add(Class(number=c[0],name=c[1],size=c[2]))
+    for s in surveys:
+        u = db.session.query(User).filter_by(scuid = s[1]).first() 
+        if u == None:
+            u = User(email = s[2],scuid = s[1])
+            db.session.add(u)
+        sur = Survey(token=sec.token_urlsafe(10),user = u)
+        u.surveys.append(sur)
+        c = db.session.query(Class).filter_by(number=s[0]).first()
+        c.surveys.append(sur)
+        db.session.add(sur)
     db.session.commit()
+    
     return render_template(
         "classes.html",classes=classes
     )
@@ -96,4 +110,13 @@ def list_classes(loc):
         classes.append([sheet.row_values(i)[0], name, sheet.row_values(i)[6]])
         i += 1
 
-    return classes
+    surveys = []
+    sheet = wb.sheet_by_index(0)
+    sheet.cell_value(0, 0)
+    i = 2
+    while i < sheet.nrows:
+        surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9]])
+        i += 1
+
+    return classes,surveys
+
