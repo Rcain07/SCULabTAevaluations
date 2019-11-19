@@ -9,6 +9,7 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
 # You can also create a setting through the App Service Extension in VS Code.
 ENV LISTEN_PORT=5000
 EXPOSE 5000
+EXPOSE 2222 80
 
 # Indicate where uwsgi.ini lives
 ENV UWSGI_INI uwsgi.ini
@@ -26,11 +27,10 @@ WORKDIR /tasurvey
 # Copy the app contents to the image
 COPY . /tasurvey
 
-# ENVWEBSITES_ENABLE_APP_SERVICE_STORAGE
 
 # If you have additional requirements beyond Flask (which is included in the
 # base image), generate a requirements.txt file with pip freeze and uncomment
 # the next three lines.
-#COPY requirements.txt /
-#RUN pip install --no-cache-dir -U pip
-#RUN pip install --no-cache-dir -r /requirements.txt
+COPY requirements.txt /
+RUN pip install --no-cache-dir -U pip
+RUN pip install --no-cache-dir -r /requirements.txt

@@ -38,3 +38,4 @@ class Class(db.Model):
 if (os.getenv("FLASK_ENV") == "development"):
     db.drop_all()
     db.create_all()
+
