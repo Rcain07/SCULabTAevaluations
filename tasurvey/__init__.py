@@ -5,6 +5,8 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
-
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+
+from tasurvey import views
+
