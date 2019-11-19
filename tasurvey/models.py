@@ -35,3 +35,6 @@ class Class(db.Model):
     def __repr__(self):
         return '<Class {}>'.format(self.number)
 
+if (os.getenv("FLASK_ENV") == "development"):
+    db.drop_all()
+    db.create_all()
