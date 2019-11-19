@@ -27,6 +27,7 @@ WORKDIR /tasurvey
 # Copy the app contents to the image
 COPY . /tasurvey
 
+
 # If you have additional requirements beyond Flask (which is included in the
 # base image), generate a requirements.txt file with pip freeze and uncomment
 # the next three lines.
