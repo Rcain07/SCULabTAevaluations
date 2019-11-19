@@ -1,5 +1,6 @@
 from . import db
 import uuid
+import os
 
 class User(db.Model):
     __tablename__="user"
@@ -30,7 +31,7 @@ class Class(db.Model):
     number = db.Column(db.Integer)
     name = db.Column(db.String(10))
     size = db.Column(db.Integer)
-    #instructor = db.Column(db.String(10))
+    instructorEmail = db.Column(db.String(120))
     surveys = db.relationship('Survey',backref='class',lazy=True)
     def __repr__(self):
         return '<Class {}>'.format(self.number)

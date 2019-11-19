@@ -81,7 +81,7 @@ def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
     for c in classes:
-        db.session.add(Class(number=c[0],name=c[1],size=c[2]))
+        db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
     for s in surveys:
         u = db.session.query(User).filter_by(scuid = s[1]).first() 
         if u == None:
@@ -90,6 +90,7 @@ def uploaded_file(filename):
         sur = Survey(token=sec.token_urlsafe(10),user = u)
         u.surveys.append(sur)
         c = db.session.query(Class).filter_by(number=s[0]).first()
+        c.instructorEmail = s[3]
         c.surveys.append(sur)
         db.session.add(sur)
     db.session.commit()
@@ -101,22 +102,97 @@ def uploaded_file(filename):
 def list_classes(loc):
     wb = xlrd.open_workbook(loc)
     sheet = wb.sheet_by_index(1)
-    sheet.cell_value(0, 0)
 
     classes = []
     i = 4
     while i < sheet.nrows-1:
         name = sheet.row_values(i)[1] + ' ' + sheet.row_values(i)[2] + ' ' + sheet.row_values(i)[3]
+        # [class number, class name, class size]
         classes.append([sheet.row_values(i)[0], name, sheet.row_values(i)[6]])
         i += 1
 
     surveys = []
     sheet = wb.sheet_by_index(0)
-    sheet.cell_value(0, 0)
     i = 2
     while i < sheet.nrows:
-        surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9]])
+        # [class number, student ID, student email, instructor email]
+        surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9], sheet.row_values(i)[7]])
         i += 1
 
     return classes,surveys
 
+# REST API for logic apps to send emails
+# TO DO: add security
+# TO DO: add better error handling
+
+# get information to send emails to students
+@app.route('/getStudents', methods=['GET'])
+def getStudents():
+    resp = {
+        "students":[]
+    }
+    if db.session.query(User).all():
+        users = db.session.query(User).all()
+        for u in users:
+            lab_names = []
+            lab_numbers = []
+            tokens = []
+            for s in u.surveys:
+                lab = db.session.query(Class).filter_by(id=s.class_id).first()
+                lab_names.append(lab.name)
+                lab_numbers.append(lab.number)
+                tokens.append(s.token)
+            student = {
+                "studentEmail":u.email,
+                "tokens":tokens,
+                "labNames":lab_names,
+                "labNumbers":lab_numbers,
+            }
+            resp["students"].append(student)
+    else:
+        resp = {
+            "students":"No students found"
+        }
+    return json.dumps(resp)
+
+# get evaluation responses to send to corresponding instructors
+@app.route('/getResponses', methods=['GET'])
+def getResponses():
+    resp = {
+        "labs":[]
+    }
+    if Class.query.all() and Survey.query.all():
+        classes = db.session.query(Class).all()
+        for c in classes:
+            print(c.surveys)
+            for s in c.surveys:
+                print(s.answers)
+            email = {
+                "name":c.name,
+                "number":c.number,
+                "size":c.size,
+                "instructorEmail":c.instructorEmail,
+                "responses":fakeResponses()
+            }
+            resp["labs"].append(email)
+    else:
+        resp = {
+            "labs":"No classes found"
+        }
+    return json.dumps(resp)
+
+# calculate scores from evaluations
+def formatResponses(responses, lab_size):
+    if surveys == []:
+        return "No one filled out the evaluation for this lab."
+    else:
+        #for response in responses:
+        return ""
+
+def fakeResponses():
+    return {
+        "The labs helped me understand the lecture material.":{
+            "avg":2.5,
+            "std":3
+        }
+    }
