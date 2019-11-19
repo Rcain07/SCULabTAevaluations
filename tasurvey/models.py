@@ -1,5 +1,6 @@
 from . import db
 import uuid
+import os
 
 class User(db.Model):
     __tablename__="user"
