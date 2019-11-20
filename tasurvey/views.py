@@ -161,7 +161,7 @@ def getResponses():
         for c in classes:
             email = {
                 "name":c.name,
-                "number":c.number,
+                "number":str(c.number),
                 "instructorEmail":c.instructorEmail,
                 "responses":parseResponses(c.surveys, c.size)
             }
