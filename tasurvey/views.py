@@ -134,19 +134,13 @@ def getStudents():
     if db.session.query(User).all():
         users = db.session.query(User).all()
         for u in users:
-            lab_names = []
-            lab_numbers = []
-            tokens = []
+            surveys = []
             for s in u.surveys:
                 lab = db.session.query(Class).filter_by(id=s.class_id).first()
-                lab_names.append(lab.name)
-                lab_numbers.append(lab.number)
-                tokens.append(s.token)
+                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
             student = {
                 "studentEmail":u.email,
-                "tokens":tokens,
-                "labNames":lab_names,
-                "labNumbers":lab_numbers,
+                "surveys": surveys
             }
             resp["students"].append(student)
     else:
