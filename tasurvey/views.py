@@ -164,12 +164,9 @@ def getResponses():
     if Class.query.all() and Survey.query.all():
         classes = db.session.query(Class).all()
         for c in classes:
-            print(c.surveys)
-            for s in c.surveys:
-                print(s.answers)
             email = {
                 "name":c.name,
-                "number":c.number,
+                "number":str(c.number),
                 "size":c.size,
                 "instructorEmail":c.instructorEmail,
                 "responses":fakeResponses()
