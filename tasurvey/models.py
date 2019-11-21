@@ -7,7 +7,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True)
     scuid  = db.Column(db.String(11),unique=True)
-    surveys = db.relationship('Survey', backref='user', lazy=True)
+    surveys = db.relationship('Survey', backref='user', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -31,8 +31,8 @@ class Class(db.Model):
     number = db.Column(db.Integer)
     name = db.Column(db.String(10))
     size = db.Column(db.Integer)
-    #instructor = db.Column(db.String(10))
-    surveys = db.relationship('Survey',backref='class',lazy=True)
+    instructorEmail = db.Column(db.String(120))
+    surveys = db.relationship('Survey',backref='class',lazy='dynamic')
     def __repr__(self):
         return '<Class {}>'.format(self.number)
 

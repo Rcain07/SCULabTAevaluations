@@ -8,6 +8,7 @@ import os
 import xlrd
 import secrets as sec
 import json
+from statistics import stdev, mean
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -84,17 +85,22 @@ def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
     for c in classes:
-        db.session.add(Class(number=c[0],name=c[1],size=c[2]))
+        if db.session.query(Class).filter_by(number=c[0],name=c[1],size=c[2]).one_or_none():
+            continue
+        db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
     for s in surveys:
-        u = db.session.query(User).filter_by(scuid = s[1]).first() 
+        u = User.query.filter_by(scuid = s[1]).one_or_none() or db.session.query(User).filter_by(scuid = s[1]).one_or_none()
         if u == None:
             u = User(email = s[2],scuid = s[1])
             db.session.add(u)
-        sur = Survey(token=sec.token_urlsafe(10),user = u)
-        u.surveys.append(sur)
-        c = db.session.query(Class).filter_by(number=s[0]).first()
-        c.surveys.append(sur)
-        db.session.add(sur)
+        c = db.session.query(Class).filter_by(number=s[0]).one_or_none() or Class.query.filter_by(number=s[0]).one_or_none()
+        c.instructorEmail = s[3]
+        survlist = c.surveys.filter_by(id=u.id).one_or_none()
+        if survlist == None:
+            sur = Survey(token=sec.token_urlsafe(10),user = u)
+            u.surveys.append(sur)
+            c.surveys.append(sur)
+            db.session.add(sur)
     db.session.commit()
     
     return render_template(
@@ -104,25 +110,140 @@ def uploaded_file(filename):
 def list_classes(loc):
     wb = xlrd.open_workbook(loc)
     sheet = wb.sheet_by_index(1)
-    sheet.cell_value(0, 0)
 
     classes = []
     i = 4
     while i < sheet.nrows-1:
         name = sheet.row_values(i)[1] + ' ' + sheet.row_values(i)[2] + ' ' + sheet.row_values(i)[3]
+        # [class number, class name, class size]
         classes.append([sheet.row_values(i)[0], name, sheet.row_values(i)[6]])
         i += 1
 
     surveys = []
     sheet = wb.sheet_by_index(0)
-    sheet.cell_value(0, 0)
     i = 2
     while i < sheet.nrows:
-        surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9]])
+        # [class number, student ID, student email, instructor email]
+        surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9], sheet.row_values(i)[7]])
         i += 1
 
     return classes,surveys
 
+<<<<<<< HEAD
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
+=======
+# REST API for logic apps to send emails
+# TO DO: add security
+# TO DO: add better error handling
+
+# get information to send emails to students
+@app.route('/getStudents', methods=['GET'])
+def getStudents():
+    resp = {
+        "students":[]
+    }
+    if db.session.query(User).all():
+        users = db.session.query(User).all()
+        for u in users:
+            surveys = []
+            for s in u.surveys:
+                lab = db.session.query(Class).filter_by(id=s.class_id).first()
+                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
+            student = {
+                "studentEmail":u.email,
+                "surveys": surveys
+            }
+            resp["students"].append(student)
+    else:
+        resp = {
+            "students":"No students found"
+        }
+    return json.dumps(resp)
+
+# get evaluation responses to send to corresponding instructors
+@app.route('/getResponses', methods=['GET'])
+def getResponses():
+    resp = {
+        "labs":[]
+    }
+    if Class.query.all():
+        classes = db.session.query(Class).all()
+        for c in classes:
+            email = {
+                "name":c.name,
+                "number":str(c.number),
+                "instructorEmail":c.instructorEmail,
+                "responses":parseResponses(c.surveys, c.size)
+            }
+            resp["labs"].append(email)
+    else:
+        resp = {
+            "labs":"No classes found"
+        }
+    return json.dumps(resp)
+
+# calculate scores from evaluations
+def parseResponses(responses_json, lab_size):
+    if responses_json:
+        responses = []
+        responses_list = list(responses_json)
+        for i in range(len(responses_list)):
+            if responses_list[i].is_done == True:
+                responses.append(json.loads(responses_list[i].answers))
+        if len(responses) == 0:
+            return "<p>No one filled out the evaluation for this lab.</p>"
+        formatted = "<p>"+str(len(responses))+" students filled out the survey out of "+str(lab_size)+"</p><br><ul>"
+        questions = list(responses[0].keys())
+        for i in range(len(questions)):
+            if i <= 3:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i > 3 and i <= 5:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 5 and i <= 10:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i == 11:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 11 and i <= 14:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i == 15:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 15 and i <= 18:
+                a = [d[questions[i]] for d in responses]
+                formatted += getCounts(questions[i], a)
+            else:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+        return formatted+"</ul>"
+    else:
+        return "<p>Error occurred.</p>"
+
+def getSummary(question, values):
+    avg = mean(values)
+    if len(values) > 1:
+        std = stdev(values)
+    else:
+        std = 0
+    return "<li>"+question+" Average response: "+str(avg)+" Standard deviation: "+str(std)+"</li>"
+
+def getCounts(question, values):
+    temp = ""
+    counts = {x:values.count(x) for x in values}
+    for key, value in counts.items():
+        temp += "<li>'"+str(key)+"': "+str(value)+"</li>"
+    return "<li>"+question+"</li><ul>"+temp+"</ul>"
+
+def clusterText(question, values):
+    temp = ""
+    for p in values:
+        if p != "":
+            temp += "<li>"+str(p)+"</li>"
+    return "<li>"+question+"</li><ul>"+temp+"</ul>"
+>>>>>>> 75dc80ff1ec63ae86f2b08ca8ef1e904b35d5437
