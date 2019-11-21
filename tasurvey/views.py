@@ -129,11 +129,9 @@ def list_classes(loc):
 
     return classes,surveys
 
-<<<<<<< HEAD
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
-=======
 # REST API for logic apps to send emails
 # TO DO: add security
 # TO DO: add better error handling
@@ -246,4 +244,3 @@ def clusterText(question, values):
         if p != "":
             temp += "<li>"+str(p)+"</li>"
     return "<li>"+question+"</li><ul>"+temp+"</ul>"
->>>>>>> 75dc80ff1ec63ae86f2b08ca8ef1e904b35d5437
