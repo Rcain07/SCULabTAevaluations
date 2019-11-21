@@ -82,18 +82,22 @@ def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
     for c in classes:
+        if Class.query.filter_by(number=c[0],name=c[1],size=c[2],instructorEmail="").one_or_none():
+            continue
         db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
     for s in surveys:
-        u = db.session.query(User).filter_by(scuid = s[1]).first() 
+        u = User.query.filter_by(scuid = s[1]).one_or_none() or db.session.query(User).filter_by(scuid = s[1]).one_or_none()
         if u == None:
             u = User(email = s[2],scuid = s[1])
             db.session.add(u)
-        sur = Survey(token=sec.token_urlsafe(10),user = u)
-        u.surveys.append(sur)
-        c = db.session.query(Class).filter_by(number=s[0]).first()
+        c = db.session.query(Class).filter_by(number=s[0]).one_or_none() or Class.query.filter_by(number=s[0]).one_or_none()
         c.instructorEmail = s[3]
-        c.surveys.append(sur)
-        db.session.add(sur)
+        survlist = c.surveys.filter_by(id=u.id).one_or_none()
+        if survlist == None:
+            sur = Survey(token=sec.token_urlsafe(10),user = u)
+            u.surveys.append(sur)
+            c.surveys.append(sur)
+            db.session.add(sur)
     db.session.commit()
     
     return render_template(
