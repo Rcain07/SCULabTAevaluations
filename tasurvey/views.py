@@ -14,6 +14,12 @@ from statistics import stdev, mean
 def home():
     return render_template("home.html")
 
+
+@app.route("/end", methods=['GET', 'POST'])
+def end():
+    return render_template("end.html")
+
+
 # @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token):
@@ -26,7 +32,7 @@ def survey(token):
         s.is_done = True
         db.session.add(s)
         db.session.commit()
-        return redirect(url_for('success'))
+        return redirect(url_for('end'))
     else:
         return render_template(
             "home.html",
