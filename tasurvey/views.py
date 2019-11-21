@@ -12,7 +12,7 @@ from statistics import stdev, mean
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("home.html")
+    return render_template("404.html")
 
 # @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
@@ -132,6 +132,12 @@ def list_classes(loc):
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
+
+@app.route("/404", methods=['GET', 'POST'])
+def error():
+    return render_template("404.html")
+
+
 # REST API for logic apps to send emails
 # TO DO: add security
 # TO DO: add better error handling
