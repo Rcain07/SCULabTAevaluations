@@ -90,6 +90,8 @@ def uploaded_file(filename):
         if u == None:
             u = User(email = s[2],scuid = s[1])
             db.session.add(u)
+        if s[2] != '':
+            u.email = s[2]
         c = db.session.query(Class).filter_by(number=s[0]).one_or_none() or Class.query.filter_by(number=s[0]).one_or_none()
         c.instructorEmail = s[3]
         survlist = c.surveys.filter_by(id=u.id).one_or_none()
@@ -118,12 +120,11 @@ def list_classes(loc):
 
     surveys = []
     sheet = wb.sheet_by_index(0)
-    i = 2
+    i = 1
     while i < sheet.nrows:
         # [class number, student ID, student email, instructor email]
         surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9], sheet.row_values(i)[7]])
         i += 1
-
     return classes,surveys
 
 # REST API for logic apps to send emails
