@@ -12,7 +12,7 @@ from statistics import stdev, mean
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("home.html")
+    return render_template("404.html")
 
 
 @app.route("/end", methods=['GET', 'POST'])
@@ -139,6 +139,12 @@ def list_classes(loc):
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
+
+@app.route("/404", methods=['GET', 'POST'])
+def error():
+    return render_template("404.html")
+
+
 # REST API for logic apps to send emails
 # TO DO: add security
 # TO DO: add better error handling
@@ -155,7 +161,7 @@ def getStudents():
             surveys = []
             for s in u.surveys:
                 lab = db.session.query(Class).filter_by(id=s.class_id).first()
-                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
+                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/survey/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
             student = {
                 "studentEmail":u.email,
                 "surveys": surveys
