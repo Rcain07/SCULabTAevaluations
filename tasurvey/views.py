@@ -9,7 +9,10 @@ import xlrd
 import secrets as sec
 import json
 
-# @app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
+def home():
+    return render_template("home.html")
+
 # @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token):
@@ -120,3 +123,6 @@ def list_classes(loc):
 
     return classes,surveys
 
+@app.route("/admin", methods=['GET', 'POST'])
+def admin():
+    return render_template("admin.html")

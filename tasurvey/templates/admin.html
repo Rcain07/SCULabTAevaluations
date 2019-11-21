@@ -1,20 +1,12 @@
-<!doctype html>
-<link rel="stylesheet" href="{{ url_for('static', filename='upload2.css') }}">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<title>Upload New File</title>
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<title>SCU Lab TA Evaluations - Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <body>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-  <ul class=flashes>
-  {% for message in messages %}
-  <script>
-        alert("Please select a file.");
-      </script>
-  {% endfor %}
-  </ul>
-{% endif %}
-{% endwith %}
 
 <!-- Sidebar/menu -->
 <nav class="w3-sidebar w3-gray w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
@@ -39,14 +31,7 @@
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
-    <h1>Upload New File</h1>
-    <p>&nbsp;</p>
-    <form method=post enctype=multipart/form-data>
-
-      <input type=file name=file>
-      <!--<input type=submit value=Upload>-->
-      <button class="button" type="submit">Upload</button>
-    </form>
+    <h1>Welcome, admin.</h1>
 
 <!-- End page content -->
 </div>
@@ -65,4 +50,5 @@ function w3_close() {
 
 </script>
 
-  </body>
+</body>
+</html>
