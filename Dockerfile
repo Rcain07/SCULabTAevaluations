@@ -9,6 +9,7 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
 # You can also create a setting through the App Service Extension in VS Code.
 ENV LISTEN_PORT=5000
 EXPOSE 5000
+EXPOSE 2222 80
 
 # Indicate where uwsgi.ini lives
 ENV UWSGI_INI uwsgi.ini
@@ -18,17 +19,18 @@ ENV UWSGI_INI uwsgi.ini
 # app's folder. Note that when multiple apps share a folder, you should create subfolders
 # with the same name as the app underneath "static" so there aren't any collisions
 # when all those static files are collected together.
-ENV STATIC_URL /hello_app/static
+ENV STATIC_URL /tasurvey/static
 
 # Set the folder where uwsgi looks for the app
-WORKDIR /hello_app
+WORKDIR /tasurvey
 
 # Copy the app contents to the image
-COPY . /hello_app
+COPY . /tasurvey
+
 
 # If you have additional requirements beyond Flask (which is included in the
 # base image), generate a requirements.txt file with pip freeze and uncomment
 # the next three lines.
-#COPY requirements.txt /
-#RUN pip install --no-cache-dir -U pip
-#RUN pip install --no-cache-dir -r /requirements.txt
+COPY requirements.txt /
+RUN pip install --no-cache-dir -U pip
+RUN pip install --no-cache-dir -r /requirements.txt
