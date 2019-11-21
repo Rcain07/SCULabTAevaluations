@@ -8,6 +8,7 @@ import os
 import xlrd
 import secrets as sec
 import json
+from statistics import stdev, mean
 
 # @app.route("/", methods=['GET', 'POST'])
 # @app.route("/survey/", methods=['GET', 'POST'])
@@ -134,19 +135,13 @@ def getStudents():
     if db.session.query(User).all():
         users = db.session.query(User).all()
         for u in users:
-            lab_names = []
-            lab_numbers = []
-            tokens = []
+            surveys = []
             for s in u.surveys:
                 lab = db.session.query(Class).filter_by(id=s.class_id).first()
-                lab_names.append(lab.name)
-                lab_numbers.append(lab.number)
-                tokens.append(s.token)
+                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
             student = {
                 "studentEmail":u.email,
-                "tokens":tokens,
-                "labNames":lab_names,
-                "labNumbers":lab_numbers,
+                "surveys": surveys
             }
             resp["students"].append(student)
     else:
@@ -161,15 +156,14 @@ def getResponses():
     resp = {
         "labs":[]
     }
-    if Class.query.all() and Survey.query.all():
+    if Class.query.all():
         classes = db.session.query(Class).all()
         for c in classes:
             email = {
                 "name":c.name,
                 "number":str(c.number),
-                "size":c.size,
                 "instructorEmail":c.instructorEmail,
-                "responses":fakeResponses()
+                "responses":parseResponses(c.surveys, c.size)
             }
             resp["labs"].append(email)
     else:
@@ -179,17 +173,64 @@ def getResponses():
     return json.dumps(resp)
 
 # calculate scores from evaluations
-def formatResponses(responses, lab_size):
-    if surveys == []:
-        return "No one filled out the evaluation for this lab."
+def parseResponses(responses_json, lab_size):
+    if responses_json:
+        responses = []
+        responses_list = list(responses_json)
+        for i in range(len(responses_list)):
+            if responses_list[i].is_done == True:
+                responses.append(json.loads(responses_list[i].answers))
+        if len(responses) == 0:
+            return "<p>No one filled out the evaluation for this lab.</p>"
+        formatted = "<p>"+str(len(responses))+" students filled out the survey out of "+str(lab_size)+"</p><br><ul>"
+        questions = list(responses[0].keys())
+        for i in range(len(questions)):
+            if i <= 3:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i > 3 and i <= 5:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 5 and i <= 10:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i == 11:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 11 and i <= 14:
+                a = [int(d[questions[i]]) for d in responses]
+                formatted += getSummary(questions[i], a)
+            elif i == 15:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+            elif i > 15 and i <= 18:
+                a = [d[questions[i]] for d in responses]
+                formatted += getCounts(questions[i], a)
+            else:
+                a = [d[questions[i]] for d in responses]
+                formatted += clusterText(questions[i], a)
+        return formatted+"</ul>"
     else:
-        #for response in responses:
-        return ""
+        return "<p>Error occurred.</p>"
 
-def fakeResponses():
-    return {
-        "The labs helped me understand the lecture material.":{
-            "avg":2.5,
-            "std":3
-        }
-    }
+def getSummary(question, values):
+    avg = mean(values)
+    if len(values) > 1:
+        std = stdev(values)
+    else:
+        std = 0
+    return "<li>"+question+" Average response: "+str(avg)+" Standard deviation: "+str(std)+"</li>"
+
+def getCounts(question, values):
+    temp = ""
+    counts = {x:values.count(x) for x in values}
+    for key, value in counts.items():
+        temp += "<li>'"+str(key)+"': "+str(value)+"</li>"
+    return "<li>"+question+"</li><ul>"+temp+"</ul>"
+
+def clusterText(question, values):
+    temp = ""
+    for p in values:
+        if p != "":
+            temp += "<li>"+str(p)+"</li>"
+    return "<li>"+question+"</li><ul>"+temp+"</ul>"
