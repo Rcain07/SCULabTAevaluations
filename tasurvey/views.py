@@ -82,7 +82,7 @@ def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
     for c in classes:
-        if Class.query.filter_by(number=c[0],name=c[1],size=c[2],instructorEmail="").one_or_none():
+        if db.session.query(Class).filter_by(number=c[0]).one_or_none():
             continue
         db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
     for s in surveys:
