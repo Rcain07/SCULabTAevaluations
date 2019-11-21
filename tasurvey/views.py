@@ -10,7 +10,10 @@ import secrets as sec
 import json
 from statistics import stdev, mean
 
-# @app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET', 'POST'])
+def home():
+    return render_template("home.html")
+
 # @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token):
@@ -82,7 +85,7 @@ def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
     for c in classes:
-        if db.session.query(Class).filter_by(number=c[0]).one_or_none():
+        if db.session.query(Class).filter_by(number=c[0],name=c[1],size=c[2]).one_or_none():
             continue
         db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
     for s in surveys:
@@ -127,6 +130,9 @@ def list_classes(loc):
         i += 1
     return classes,surveys
 
+@app.route("/admin", methods=['GET', 'POST'])
+def admin():
+    return render_template("admin.html")
 # REST API for logic apps to send emails
 # TO DO: add security
 # TO DO: add better error handling
