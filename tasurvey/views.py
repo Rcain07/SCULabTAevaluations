@@ -158,7 +158,7 @@ def getStudents():
             surveys = []
             for s in u.surveys:
                 lab = db.session.query(Class).filter_by(id=s.class_id).first()
-                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
+                surveys.append("<li><a href = 'http://rcain07.pythonanywhere.com/survey/"+str(s.token)+"'>"+str(lab.number)+": "+str(lab.name)+"</a></li>")
             student = {
                 "studentEmail":u.email,
                 "surveys": surveys
