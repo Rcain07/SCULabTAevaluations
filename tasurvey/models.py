@@ -1,6 +1,8 @@
 from . import db
 import uuid
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 class User(db.Model):
     __tablename__="user"
@@ -36,7 +38,25 @@ class Class(db.Model):
     def __repr__(self):
         return '<Class {}>'.format(self.number)
 
+class Admin(UserMixin,db.Model):
+    __tablename__="admin"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(30))
+    password_hash = db.Column(db.String(128))
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 if (os.getenv("FLASK_ENV") == "development"):
+    
     db.drop_all()
     db.create_all()
+
+    admin = Admin(username="admin")
+    admin.set_password("admin")
+    db.session.add(admin)
+    db.session.commit()
 
