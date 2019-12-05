@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request, send_from_directory, flash
-from . import app
+from . import app,login
 # from tasurvey.forms import SurveyForm
 from tasurvey.models import *
 from werkzeug.utils import secure_filename
@@ -9,10 +9,21 @@ import xlrd
 import secrets as sec
 import json
 from statistics import stdev, mean
+from flask_login import current_user, login_user
+from tasurvey.forms import LoginForm
+from flask_login import logout_user
+from flask_login import login_required
+
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template("404.html")
+
+
+@app.route("/end", methods=['GET', 'POST'])
+def end():
+    return render_template("end.html")
+
 
 # @app.route("/survey/", methods=['GET', 'POST'])
 @app.route("/survey/<token>", methods=['GET', 'POST'])
@@ -26,7 +37,7 @@ def survey(token):
         s.is_done = True
         db.session.add(s)
         db.session.commit()
-        return redirect(url_for('success'))
+        return redirect(url_for('end'))
     else:
         return render_template(
             "home.html",
@@ -58,6 +69,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/upload_file/', methods=['GET', 'POST'])
+@login_required
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -81,6 +93,7 @@ def upload_file():
     )
 
 @app.route('/uploads/<filename>')
+@login_required
 def uploaded_file(filename):
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
@@ -93,6 +106,8 @@ def uploaded_file(filename):
         if u == None:
             u = User(email = s[2],scuid = s[1])
             db.session.add(u)
+        if s[2] != '':
+            u.email = s[2]
         c = db.session.query(Class).filter_by(number=s[0]).one_or_none() or Class.query.filter_by(number=s[0]).one_or_none()
         c.instructorEmail = s[3]
         survlist = c.surveys.filter_by(id=u.id).one_or_none()
@@ -121,15 +136,15 @@ def list_classes(loc):
 
     surveys = []
     sheet = wb.sheet_by_index(0)
-    i = 2
+    i = 1
     while i < sheet.nrows:
         # [class number, student ID, student email, instructor email]
         surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9], sheet.row_values(i)[7]])
         i += 1
-
     return classes,surveys
 
 @app.route("/admin", methods=['GET', 'POST'])
+@login_required
 def admin():
     return render_template("admin.html")
 
@@ -137,15 +152,36 @@ def admin():
 def error():
     return render_template("404.html")
 
+
+@login.user_loader
+def load_user(user_id):
+    return Admin.query.get(int(user_id))
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    return render_template("login.html")
+    if current_user.is_authenticated:
+        return redirect(url_for('postLogin'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        admin = Admin.query.filter_by(username=form.username.data).first()
+        print(admin)
+        if admin is None or not admin.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(admin, remember=form.remember_me.data)
+        return redirect(url_for('postLogin'))
+    return render_template('login.html', form=form)
 
 @app.route("/postLogin", methods=['GET', 'POST'])
+@login_required
 def postLogin():
     return render_template("postLogin.html")
 
-
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 # REST API for logic apps to send emails
 # TO DO: add security
 # TO DO: add better error handling

@@ -30,28 +30,30 @@
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
     <h2 style="text-align: center;">Admin Login</h2>
-    <form action="postLogin" method="post">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
         <div class="imgcontainer">
           <img style="height: 150px; width: 150px;" src="https://s3.amazonaws.com/tabroom-files/tourns/8110/SCUSealWhite.png" alt="Avatar" class="avatar">
         </div>
       
         <div class="container">
           <label for="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" name="uname" required>
-      
+          <!-- <input type="text" placeholder="Enter Username" name="uname" required> -->
+          {{ form.username(size=32) }}
           <label for="psw"><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="psw" required>
-      
-          <button type="submit">Login</button>
+          <!-- <input type="password" placeholder="Enter Password" name="psw" required> -->
+          {{ form.password(size=32) }}
+          <!-- <button type="submit">Login</button> -->
+          <p>{{ form.submit() }}</p>
           <label>
-            <input type="checkbox" checked="checked" name="remember"> Remember me
+          {{ form.remember_me() }}  {{ form.remember_me.label }}
           </label>
         </div>
       
-        <div class="container" style="background-color:#f1f1f1">
+        <!-- <div class="container" style="background-color:#f1f1f1">
           <button type="button" class="cancelbtn">Cancel</button>
           <span class="psw">Forgot <a href="#">password?</a></span>
-        </div>
+        </div> -->
       </form>
 
 <!-- End page content -->
