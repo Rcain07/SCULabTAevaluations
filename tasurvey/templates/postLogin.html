@@ -1,25 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<title>SCU Lab TA Evaluations - Admin</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!doctype html>
+<link rel="stylesheet" href="{{ url_for('static', filename='upload2.css') }}">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<title>Admin Login</title>
 
 <body>
 
 <!-- Sidebar/menu -->
 <nav class="w3-sidebar w3-gray w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
-  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
-  <div class="w3-container">
-    <h3 class="w3-padding-64"><b>SCU Lab TA<br>Evaluations</b></h3>
-  </div>
-  <div class="w3-bar-block">
-    <a href="/admin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
-    <a href="/login" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Login</a> 
-    <!--<a href="/upload_file" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Upload File</a> -->
-  </div>
-</nav>
+    <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+    <div class="w3-container">
+      <h3 class="w3-padding-64 centerText"><b>SCU Lab TA<br>Evaluations</b></h3>
+    </div>
+    <div class="w3-bar-block">
+      <a href="/admin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+      <a href="/login" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Login</a> 
+      <!--<a href="/upload_file" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Upload File</a> -->
+    </div>
+  </nav>
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-gray w3-xlarge w3-padding">
@@ -28,11 +25,13 @@
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
+<p>&nbsp;</p><p>&nbsp;</p>
 <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
-    <h1>Welcome, admin.</h1>
+    <a href="/admin" class="button">Homepage</a>
+    <a href="upload_file" class="button">Upload File</a>
 
 <!-- End page content -->
 </div>
@@ -51,5 +50,4 @@ function w3_close() {
 
 </script>
 
-</body>
-</html>
+  </body>

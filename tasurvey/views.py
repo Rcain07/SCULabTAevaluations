@@ -144,6 +144,14 @@ def admin():
 def error():
     return render_template("404.html")
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    return render_template("login.html")
+
+@app.route("/postLogin", methods=['GET', 'POST'])
+def postLogin():
+    return render_template("postLogin.html")
+
 
 # REST API for logic apps to send emails
 # TO DO: add security
