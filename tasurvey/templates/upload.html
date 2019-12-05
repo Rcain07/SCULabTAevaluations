@@ -1,3 +1,4 @@
+<!-- HTML of upload file page -->
 <!doctype html>
 <link rel="stylesheet" href="{{ url_for('static', filename='upload2.css') }}">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -25,7 +26,6 @@
   <div class="w3-bar-block">
     <a href="/admin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
     <a href="/login" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Login</a> 
-    <!--<a href="/upload_file" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Upload File</a> -->
   </div>
 </nav>
 
@@ -38,14 +38,13 @@
 <!-- Overlay effect when opening sidebar on small screens -->
 <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
-<!-- !PAGE CONTENT! -->
+<!-- Page content -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
     <h1>Upload New File</h1>
     <p>&nbsp;</p>
     <form method=post enctype=multipart/form-data>
 
       <input type=file name=file>
-      <!--<input type=submit value=Upload>-->
       <button class="button" type="submit">Upload</button>
     </form>
 

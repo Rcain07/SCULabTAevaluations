@@ -1,3 +1,4 @@
+<!-- HTML for page shown after login; shows options to log out or upload a file -->
 <!doctype html>
 <link rel="stylesheet" href="{{ url_for('static', filename='upload2.css') }}">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -14,7 +15,6 @@
     <div class="w3-bar-block">
       <a href="/admin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
       <a href="/login" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Login</a> 
-      <!--<a href="/upload_file" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Upload File</a> -->
     </div>
   </nav>
 
@@ -28,7 +28,7 @@
 <p>&nbsp;</p><p>&nbsp;</p>
 <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
-<!-- !PAGE CONTENT! -->
+<!-- Page content -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
     <a href="/logout" class="button">Log Out</a>
     <a href="upload_file" class="button">Upload File</a>

@@ -1,3 +1,4 @@
+<!-- Survey questions HTML code -->
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,8 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='layout.css') }}"  />
-        <!--<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">-->
-
     </head>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -26,11 +25,6 @@
                 
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-                <script>
-                /*jQuery($ => {
-                  $('.build-wrap').formBuilder()
-                })*/
-                </script>
                     <form id="rendered-form"  method="POST"> 
                         <div class="rendered-form">
                             <div class="">
@@ -138,11 +132,11 @@
                                     </div>
                                 </div>
                                 <div class="fb-textarea form-group field-textarea-11">
-                                    <label for="textarea-11" class="fb-textarea-label">What was your favorite aspect of the lab?</label>
+                                    <label for="textarea-11" class="fb-textarea-label">What was your favorite aspect of the lab? (limit 200 characters)</label>
                                     <br></br><textarea type="textarea" maxlength = "200" class="form-control" name="What was your favorite aspect of the lab?" id="textarea-11"></textarea>
                                 </div>
                                 <div class="fb-textarea form-group field-textarea-12">
-                                    <label for="textarea-12" class="fb-textarea-label">What about the lab would you like to see improved?</label>
+                                    <label for="textarea-12" class="fb-textarea-label">What about the lab would you like to see improved? (limit 200 characters)</label>
                                     <br></br><textarea type="textarea" maxlength = "200" class="form-control" name="What about the lab would you like to see improved?" id="textarea-12"></textarea>
                                 </div>
                                 <div class="">
@@ -273,7 +267,7 @@
                                     </div>
                                 </div>
                                 <div class="fb-textarea form-group field-textarea-21">
-                                    <label for="textarea-21" class="fb-textarea-label">What, if anything, could the lab instructor do to improve the experience?</label>
+                                    <label for="textarea-21" class="fb-textarea-label">What, if anything, could the lab instructor do to improve the experience? (limit 200 characters)</label>
                                     <br></br><textarea type="textarea" maxlength = "200" class="form-control" name="What, if anything, could the lab instructor do to improve the experience?" id="textarea-21"></textarea>
                                 </div>
                                 <div class="">
@@ -354,7 +348,7 @@
                                     </div>
                                 </div>
                                 <div class="fb-textarea form-group field-textarea-31">
-                                    <label for="textarea-31" class="fb-textarea-label">What, if anything, could improve lab space and equipment?</label>
+                                    <label for="textarea-31" class="fb-textarea-label">What, if anything, could improve lab space and equipment? (limit 200 characters)</label>
                                     <br></br><textarea type="textarea" maxlength = "200" class="form-control" name="What, if anything, could improve lab space and equipment?" id="textarea-31"></textarea>
                                 </div>
                                 <div class="">
@@ -437,7 +431,7 @@
                                 <div class="">
                                     <h4 id="control-2785965">Lecture Section Instructor</h4></div>
                                 <div class="fb-textarea form-group field-textarea-51">
-                                    <label for="textarea-51" class="fb-textarea-label">What feedback would you give the lecture section instructor (not the lab TA) about the labs?</label>
+                                    <label for="textarea-51" class="fb-textarea-label">What feedback would you give the lecture section instructor (not the lab TA) about the labs? (limit 200 characters)</label>
                                     <br></br><textarea type="textarea" maxlength = "200" class="form-control" name="What feedback would you give the lecture section instructor (not the lab TA) about the labs?" id="textarea-51"></textarea>
                                 </div>
                             <input class="submit" type="submit" value="Submit">

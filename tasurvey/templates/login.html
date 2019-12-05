@@ -1,3 +1,4 @@
+<!-- Login page HTML -->
 <!doctype html>
 <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -26,7 +27,7 @@
 <!-- Overlay effect when opening sidebar on small screens -->
 <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 
-<!-- !PAGE CONTENT! -->
+<!-- Page content -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
     <h2 style="text-align: center;">Admin Login</h2>
     <form action="" method="post">
@@ -37,22 +38,14 @@
       
         <div class="container">
           <label for="uname"><b>Username</b></label>
-          <!-- <input type="text" placeholder="Enter Username" name="uname" required> -->
           {{ form.username(size=32) }}
           <label for="psw"><b>Password</b></label>
-          <!-- <input type="password" placeholder="Enter Password" name="psw" required> -->
           {{ form.password(size=32) }}
-          <!-- <button type="submit">Login</button> -->
           <p>{{ form.submit() }}</p>
           <label>
           {{ form.remember_me() }}  {{ form.remember_me.label }}
           </label>
         </div>
-      
-        <!-- <div class="container" style="background-color:#f1f1f1">
-          <button type="button" class="cancelbtn">Cancel</button>
-          <span class="psw">Forgot <a href="#">password?</a></span>
-        </div> -->
       </form>
 
 <!-- End page content -->
