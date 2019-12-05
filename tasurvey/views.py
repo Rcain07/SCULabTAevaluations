@@ -24,14 +24,12 @@ def home():
 def end():
     return render_template("end.html")
 
-
-# @app.route("/survey/", methods=['GET', 'POST'])
+# Survey Logic, used for finding the unique survey, filling it out and saving it in the database
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token):
-    # surveyFormObject = SurveyForm()
     s = Survey.query.filter_by(token=token).one_or_none()
     if (not s or s.is_done):
-        return redirect(url_for('/'))
+        return redirect(url_for('home'))
     if request.method == 'POST':
         s.answers = json.dumps(request.form)
         s.is_done = True
