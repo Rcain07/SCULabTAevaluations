@@ -1,0 +1,69 @@
+<!doctype html>
+<link rel="stylesheet" href="{{ url_for('static', filename='upload2.css') }}">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<title>Upload New File</title>
+
+<body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+  <script>
+        alert("Please select a file.");
+      </script>
+  {% endfor %}
+  </ul>
+{% endif %}
+{% endwith %}
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-gray w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+    <h3 class="w3-padding-64"><b>SCU Lab TA<br>Evaluations</b></h3>
+  </div>
+  <div class="w3-bar-block">
+    <a href="/admin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="/login" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Login</a> 
+    <!--<a href="/upload_file" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Upload File</a> -->
+  </div>
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large w3-gray w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-gray w3-margin-right" onclick="w3_open()">☰</a>
+  <span>Company Name</span>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+    <h1>Upload New File</h1>
+    <p>&nbsp;</p>
+    <form method=post enctype=multipart/form-data>
+
+      <input type=file name=file>
+      <!--<input type=submit value=Upload>-->
+      <button class="button" type="submit">Upload</button>
+    </form>
+
+<!-- End page content -->
+</div>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+</script>
+
+  </body>
