@@ -1,4 +1,4 @@
-/* CSS for upload a file page */
+/* Description: This file contains the styling for "upload a file" page. It's used for both upload.html and postLogin.html because postLogin just uses the same button styling in this file. */
 * {
     text-align: center;
 }
