@@ -25,6 +25,8 @@ def end():
     return render_template("end.html")
 
 # Survey Logic, used for finding the unique survey, filling it out and saving it in the database
+# input: token (string)
+# output: rendered HTML template
 @app.route("/survey/<token>", methods=['GET', 'POST'])
 def survey(token):
     s = Survey.query.filter_by(token=token).one_or_none()
@@ -42,6 +44,9 @@ def survey(token):
             # form=surveyFormObject,
         )
 
+# Endpoint to a succesful survey submission
+# input: none
+# output: rendered template with responses from that survey
 @app.route("/success", methods=['GET', 'POST'])
 def success():
     # get survey response from database
@@ -57,6 +62,7 @@ def success():
         
     )
 
+# global variables for allowed file types
 basedir = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -66,6 +72,9 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Determines file type is allowed
+# input: filename
+# output: true if file type is allowed 
 @app.route('/upload_file/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -90,15 +99,21 @@ def upload_file():
         "upload.html",
     )
 
+# Upload file
+# input: none
+# output: rendered template with filename (redirects to uploaded_file(filename))
 @app.route('/uploads/<filename>')
 @login_required
 def uploaded_file(filename):
+    # parse file
     path = os.path.join(basedir, UPLOAD_FOLDER, filename)
     classes,surveys = list_classes(path)
+    # update classes in database
     for c in classes:
         if db.session.query(Class).filter_by(number=c[0],name=c[1],size=c[2]).one_or_none():
             continue
         db.session.add(Class(number=c[0],name=c[1],size=c[2],instructorEmail=""))
+    # update student information in database
     for s in surveys:
         u = User.query.filter_by(scuid = s[1]).one_or_none() or db.session.query(User).filter_by(scuid = s[1]).one_or_none()
         if u == None:
@@ -120,12 +135,15 @@ def uploaded_file(filename):
         "classes.html",classes=classes
     )
 
+# Parse file to get list of classes and students for each
+# input: location of file
+# output: classes array and surveys array
 def list_classes(loc):
     wb = xlrd.open_workbook(loc)
     sheet = wb.sheet_by_index(1)
 
     classes = []
-    i = 4
+    i = 4 # skip initial lines with column labels
     while i < sheet.nrows-1:
         name = sheet.row_values(i)[1] + ' ' + sheet.row_values(i)[2] + ' ' + sheet.row_values(i)[3]
         # [class number, class name, class size]
@@ -134,7 +152,7 @@ def list_classes(loc):
 
     surveys = []
     sheet = wb.sheet_by_index(0)
-    i = 1
+    i = 1 # skip first lines with column label
     while i < sheet.nrows:
         # [class number, student ID, student email, instructor email]
         surveys.append([sheet.row_values(i)[1], sheet.row_values(i)[8], sheet.row_values(i)[9], sheet.row_values(i)[7]])
@@ -180,11 +198,10 @@ def postLogin():
 def logout():
     logout_user()
     return redirect(url_for('login'))
-# REST API for logic apps to send emails
-# TO DO: add security
-# TO DO: add better error handling
-
-# get information to send emails to students
+    
+# Get information to send emails to students
+# input: none
+# output: formatted JSON with list of students and their respective email information
 @app.route('/getStudents', methods=['GET'])
 def getStudents():
     resp = {
@@ -208,7 +225,9 @@ def getStudents():
         }
     return json.dumps(resp)
 
-# get evaluation responses to send to corresponding instructors
+# Get evaluation responses to send to corresponding instructors
+# input: none
+# output: formatted JSON with list of evaluation summaries for each respective professor
 @app.route('/getResponses', methods=['GET'])
 def getResponses():
     resp = {
@@ -230,7 +249,9 @@ def getResponses():
         }
     return json.dumps(resp)
 
-# calculate scores from evaluations
+# Summarize responses for one lab
+# input: survey responses in JSON and lab size for one lab
+# output: HTML formatted string with summary of responses
 def parseResponses(responses_json, lab_size):
     if responses_json:
         responses = []
@@ -242,6 +263,7 @@ def parseResponses(responses_json, lab_size):
             return "<p>No one filled out the evaluation for this lab.</p>"
         formatted = "<p>"+str(len(responses))+" students filled out the survey out of "+str(lab_size)+"</p><br><ul>"
         questions = list(responses[0].keys())
+        # parse JSON response
         for i in range(len(questions)):
             if i <= 3:
                 a = [int(d[questions[i]]) for d in responses]
@@ -271,14 +293,20 @@ def parseResponses(responses_json, lab_size):
     else:
         return "<p>Error occurred.</p>"
 
+# Get the standard deviation and average value for one question
+# input: question (string) and array of values for that question
+# output: HTML formatted string with the standard deviation and average value for one question
 def getSummary(question, values):
     avg = mean(values)
     if len(values) > 1:
         std = stdev(values)
     else:
         std = 0
-    return "<li>"+question+" Average response: "+str(avg)+" Standard deviation: "+str(std)+"</li>"
+    return "<li>"+question+" Average response: "+str(round(avg,2))+" Standard deviation: "+str(round(std,2))+"</li>"
 
+# Get the counts for each answer choice of one question
+# input: question (string) and array of values for that question
+# output: HTML formatted string with the counts for each answer choice
 def getCounts(question, values):
     temp = ""
     counts = {x:values.count(x) for x in values}
@@ -286,6 +314,9 @@ def getCounts(question, values):
         temp += "<li>'"+str(key)+"': "+str(value)+"</li>"
     return "<li>"+question+"</li><ul>"+temp+"</ul>"
 
+# Cluster text for one question
+# input: question (string) and array of values for that question
+# output: HTML formatted string with a list of text responses
 def clusterText(question, values):
     temp = ""
     for p in values:
