@@ -31,7 +31,7 @@ def survey(token):
     # surveyFormObject = SurveyForm()
     s = Survey.query.filter_by(token=token).one_or_none()
     if (not s or s.is_done):
-        return redirect(url_for('404'))
+        return redirect(url_for('/'))
     if request.method == 'POST':
         s.answers = json.dumps(request.form)
         s.is_done = True
