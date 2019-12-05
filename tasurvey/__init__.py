@@ -1,4 +1,6 @@
-
+'''
+Description: Functional file that initializes our app
+'''
 import os
 from flask import Flask, flash, request, redirect, url_for
 from config import Config

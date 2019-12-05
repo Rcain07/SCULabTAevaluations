@@ -1,3 +1,8 @@
+'''
+Description: A file with functions that serve as endpoints 
+for our backend API to interact with our frontend and our logic apps.
+'''
+
 from datetime import datetime
 from flask import Flask, render_template, redirect, url_for, request, send_from_directory, flash
 from . import app,login
@@ -14,12 +19,16 @@ from tasurvey.forms import LoginForm
 from flask_login import logout_user
 from flask_login import login_required
 
-
+# Endpoint for catch-all
+# input: none
+# output: rendered 404 error HTML template
 @app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template("404.html")
 
-
+# Endpoint for end
+# input: none
+# output: rendered HTML template
 @app.route("/end", methods=['GET', 'POST'])
 def end():
     return render_template("end.html")
@@ -68,13 +77,16 @@ UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Determines file type is allowed
+# input: filename
+# output: true if file type is allowed 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Determines file type is allowed
-# input: filename
-# output: true if file type is allowed 
+# Upload file
+# input: none
+# output: rendered template with filename (redirects to uploaded_file(filename))
 @app.route('/upload_file/', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -99,9 +111,9 @@ def upload_file():
         "upload.html",
     )
 
-# Upload file
-# input: none
-# output: rendered template with filename (redirects to uploaded_file(filename))
+# Update database with uploaded file information
+# input: filename
+# output: rendered template with classes information
 @app.route('/uploads/<filename>')
 @login_required
 def uploaded_file(filename):
@@ -159,20 +171,31 @@ def list_classes(loc):
         i += 1
     return classes,surveys
 
+# Endpoint for admin page
+# input: none
+# output: rendered HTML template
 @app.route("/admin", methods=['GET', 'POST'])
 @login_required
 def admin():
     return render_template("admin.html")
 
+# Endpoint for 404 error
+# input: none
+# output: rendered HTML template
 @app.route("/404", methods=['GET', 'POST'])
 def error():
     return render_template("404.html")
 
-
+# Loads user
+# input: user ID
+# output: user ID information from database
 @login.user_loader
 def load_user(user_id):
     return Admin.query.get(int(user_id))
 
+# Endpoint for admin login page
+# input: none
+# output: rendered HTML template with admin form
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -188,11 +211,17 @@ def login():
         return redirect(url_for('postLogin'))
     return render_template('login.html', form=form)
 
+# Endpoint for after admin logs in
+# input: none
+# output: rendered HTML template
 @app.route("/postLogin", methods=['GET', 'POST'])
 @login_required
 def postLogin():
     return render_template("postLogin.html")
 
+# Endpoint for admin logout
+# input: none
+# output: rendered HTML template that redirects to login page
 @app.route('/logout')
 @login_required
 def logout():

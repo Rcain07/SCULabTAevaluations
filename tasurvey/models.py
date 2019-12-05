@@ -1,3 +1,6 @@
+'''
+Description: A class file for our database to define each table
+'''
 from . import db
 import uuid
 import os
