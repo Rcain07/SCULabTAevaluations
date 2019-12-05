@@ -3,10 +3,6 @@ html, body, html * {
   font-family: 'Roboto', sans-serif;
 }
 
-* {
-    text-align: center;
-}
-
 h1{
     padding-top: 50px;
     text-align: center;
